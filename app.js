@@ -14,16 +14,15 @@ const session = require("express-session");
 const passport = require("passport");
 const Localstrategy = require("passport-local");
 const User = require("./models/user.js");
-const mongostore = require("connect-mongo");
+const Mongostore = require("connect-mongo");
 
 
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
-const MongoStore = require('connect-mongo');
 
 // const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const dbURL = process.env.ATLASDB_URL
+const dbURL = process.env.ATLASDB_URL;
 
 main() 
     .then(()  => {
@@ -45,16 +44,12 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
-const store = MongoStore.create({
+const store = Mongostore.create({
     mongoUrl: dbURL,
     crypto: {
         secret: process.env.SECRET,
     },
-    touchAfter: 24 *3600,
-});
-
-store.on('error', function (e) {
-    console.log(e);
+    touchAfter: 24 * 3600,
 });
 
 const sessionOptions = {
@@ -68,10 +63,6 @@ const sessionOptions = {
         httpOnly: true,
     },
 }
-
-// app.get("/", (req, res) => {
-//     res.send("hey");
-// })
 
 app.use(session(sessionOptions));
 app.use(flash());
