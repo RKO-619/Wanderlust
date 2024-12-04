@@ -8,21 +8,27 @@ module.exports.index = async (req, res) => {
     res.render("listings/index.ejs", { allListings });
 };
 
+
 module.exports.renderNewForm = (req, res) => {
     return Promise.resolve(res.render("listings/new.ejs"));
 };
 
  module.exports.showListing = async (req, res) => {
     let { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews").populate("owner");
-       console.log(listing.owner);
+    const listing = await Listing.findById(id)
+    .populate({
+       path: "reviews", 
+       populate: {
+         path: "author" ,
+       },
+     })
+     .populate("owner");
  
     if (!listing) {
        req.flash("error", "Listing you requested for does not exist!");
        return res.redirect("/listings");
     }
- 
- 
+    console.log(listing.owner);
     res.render("listings/show.ejs", { listing });
 };
 
